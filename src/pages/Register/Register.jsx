@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Card from "react-bootstrap/Card"
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -8,7 +8,9 @@ import { ToastContainer, toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import 'react-toastify/dist/ReactToastify.css';
 import Spiner from '../../components/Spiner/Spinner';
+import { registerfunc } from '../../services/Apis';
 import "./register.css"
+import { addData } from '../../components/context/ContextProvider';
 
 const Register = () => {
 
@@ -24,6 +26,9 @@ const Register = () => {
   const [image, setImage] = useState();
   const [preview, setPreview] = useState("");
   const [showspin, setShowSpin] = useState(true);
+
+  const navigate = useNavigate();
+  const { useradd, setUseradd } = useContext(addData);
 
   const setInputValue = (e) => {
     const { name, value } = e.target;
@@ -46,7 +51,7 @@ const Register = () => {
     setImage(e.target.files[0])
   }
 
-  const submitUserData = (e) => {
+  const submitUserData = async(e) => {
     e.preventDefault();
 
     const { fname, lname, email, mobile, gender, location } = inputdata;
@@ -81,12 +86,38 @@ const Register = () => {
       data.append('location', location);
       data.append('user_profile', image);
       data.append('status', status);
+
+      const config = {
+          'Content-Type':'multipart/form-data'
+      }
+
+      const response = await registerfunc(data, config);
+      
+      if(response.status === 201){
+        setInputData({
+          ...inputdata,
+          fname:"",
+          lname: "",
+          email: "",
+          mobile: "",
+          gender: "",
+          location: ""
+        });
+        setStatus("");
+        setImage("");
+        setUseradd(response.data)
+        navigate("/");
+      }else{
+        toast.error("Error!")
+      }
+
     }
+
   }
 
   useEffect(() => {
     if (image) {
-      setPreview(URL.createObjectURL(preview))
+      setPreview(URL.revokeObjectURL(preview))
     }
     setTimeout(() => {
       setShowSpin(false);
@@ -139,7 +170,7 @@ const Register = () => {
                 </Form.Group>
                 <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                   <Form.Label>Select Your Status</Form.Label>
-                  <Select options={options} onChange={setStatusValue} value={status} />
+                  <Select options={options} onChange={setStatusValue}  />
                 </Form.Group>
                 <Form.Group className="mb-3 col-lg-6" controlId="formBasicEmail">
                   <Form.Label>Select Your Profile</Form.Label>

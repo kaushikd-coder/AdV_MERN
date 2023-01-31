@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -8,12 +8,18 @@ import "./home.css"
 import { toast } from 'react-toastify';
 import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spinner';
+import { addData } from '../../components/context/ContextProvider';
+
 
 const Home = () => {
 
   const [showspin,setShowSpin] = useState(true);
 
+
   const navigate = useNavigate();
+
+  const { useradd, setUseradd } = useContext(addData);
+
 
   const addUser = () => {
     navigate('/register');
@@ -26,7 +32,11 @@ const Home = () => {
   })
 
   return (
-    <div className="container">
+    <>
+      { 
+        useradd ?  <Alert variant="success" onClose={() => setUseradd("")} dismissible>{useradd.fname.toUpperCase()} Succesfully Added</Alert>:""
+      }
+      <div className="container">
       <div className="main_div">
         {/* search add btn */}
         <div className="search_add mt-4 d-flex justify-content-between">
@@ -132,7 +142,8 @@ const Home = () => {
         showspin ? <Spiner /> : <Tables />
 
       }
-    </div>
+    </div> 
+    </>
       )
 }
 
