@@ -72,7 +72,15 @@ const Register = () => {
     } else if (location === "") {
       toast.error("location is Required !")
     } else {
-      toast.success("Registration successfully done !")
+      const data = new FormData();
+      data.append('fname', fname);
+      data.append('lname', lname);
+      data.append('email', email);
+      data.append('mobile', mobile);
+      data.append('gender', gender);
+      data.append('location', location);
+      data.append('user_profile', image);
+      data.append('status', status);
     }
   }
 
