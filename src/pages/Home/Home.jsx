@@ -9,7 +9,8 @@ import { toast } from 'react-toastify';
 import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spinner';
 import { addData } from '../../components/context/ContextProvider';
-import { userGetFunc } from '../../services/Apis';
+import { dltdata } from '../../components/context/ContextProvider';
+import { deletfunc, userGetFunc } from '../../services/Apis';
 
 
 const Home = () => {
@@ -20,6 +21,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const { useradd, setUseradd } = useContext(addData);
+  const {deletedata, setDLtdata} = useContext(dltdata);
 
   const addUser = () => {
     navigate('/register');
@@ -31,6 +33,16 @@ const Home = () => {
       setUserData(response.data.userData);
     }else{
       toast.error(response.data.message);
+    }
+  }
+
+  const deleteUser = async(id) => {
+    const response = await deletfunc(id);
+    if (response.status === 200) {
+      userGet();
+      setDLtdata(response.data)
+    }else{
+      toast.error("error");
     }
   }
 
@@ -149,7 +161,9 @@ const Home = () => {
         </div>
       </div>
       {
-        showspin ? <Spiner /> : <Tables userData= {userData}/>
+        showspin ? <Spiner /> : <Tables userData= {userData}
+                                        deleteUser={deleteUser}     
+        />
 
       }
     </div> 

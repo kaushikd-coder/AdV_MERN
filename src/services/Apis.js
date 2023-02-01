@@ -12,3 +12,11 @@ export const userGetFunc = async() => {
 export const singeleUserGetFunc = async(id) => {
     return await commonRequest("GET", `${BASE_URL}/user/${id}`,"");
 }
+
+export const editFunc = async (id, data, header) => {
+    return await commonRequest("PATCH", `${BASE_URL}/user/edit/${id}`, data, header)
+}
+
+export const deletfunc = async(id)=>{
+    return await commonRequest("DELETE",`${BASE_URL}/user/delete/${id}`,{});
+}

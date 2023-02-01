@@ -9,8 +9,7 @@ import "./table.css"
 import { NavLink } from 'react-router-dom';
 import { BASE_URL } from '../../services/helper';
 
-const Tables = ({userData}) => {
-  console.log(userData)
+const Tables = ({ userData ,  deleteUser }) => {
   
   return (
     <div className="container">
