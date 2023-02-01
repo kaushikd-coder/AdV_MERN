@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Card from "react-bootstrap/Card"
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -9,8 +9,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import 'react-toastify/dist/ReactToastify.css';
 import Spiner from '../../components/Spiner/Spinner';
 import "./edit.css"
-import { singeleUserGetFunc } from '../../services/Apis';
+import { editFunc, singeleUserGetFunc } from '../../services/Apis';
 import { BASE_URL } from '../../services/helper';
+import { updateData } from '../../components/context/ContextProvider';
 
 const Edit = () => {
   const [inputdata, setInputData] = useState({
@@ -22,12 +23,15 @@ const Edit = () => {
     location: ""
   })
   const [status, setStatus] = useState("Active");
-  const [imgdata,setImgdata] = useState("");
+  const [imgdata, setImgdata] = useState("");
   const [image, setImage] = useState();
   const [preview, setPreview] = useState("");
   const [showspin, setShowSpin] = useState(true);
 
-  const {id} = useParams();
+  const { update, setUpdate } = useContext(updateData)
+
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const setInputValue = (e) => {
     const { name, value } = e.target;
@@ -50,19 +54,19 @@ const Edit = () => {
     setImage(e.target.files[0])
   }
 
-  const userProfileGet = async()=>{
+  const userProfileGet = async () => {
     const response = await singeleUserGetFunc(id);
-    
-    if(response.status === 200){
+
+    if (response.status === 200) {
       setInputData(response.data.userData)
       setStatus(response.data.status)
       setImgdata(response.data.profile)
-    }else{
+    } else {
       console.log("error");
     }
   }
 
-  const submitUserData = (e) => {
+  const submitUserData = async (e) => {
     e.preventDefault();
 
     const { fname, lname, email, mobile, gender, location } = inputdata;
@@ -88,16 +92,37 @@ const Edit = () => {
     } else if (location === "") {
       toast.error("location is Required !")
     } else {
-      toast.success("Registration successfully done !")
+      // toast.success("Registration successfully done !")
+
+      const data = new FormData();
+      data.append("fname", fname)
+      data.append("lname", lname)
+      data.append("email", email)
+      data.append("mobile", mobile)
+      data.append("gender", gender)
+      data.append("status", status)
+      data.append("user_profile", image || imgdata)
+      data.append("location", location)
+
+      const config = {
+        'Content-Type': 'multipart/form-data'
+      }
+
+      const response = await editFunc(id, data, config);
+      
+      if (response.status === 200) {
+        setUpdate(response.data.userData)
+        navigate("/")
+      }
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     userProfileGet();
-  },[id])
+  }, [id])
 
   useEffect(() => {
-    
+
     if (image) {
       setImgdata("")
       setPreview(URL.revokeObjectURL(preview))
@@ -114,7 +139,7 @@ const Edit = () => {
           <h2 className='text-center mt-1'>Update Your Details</h2>
           <Card className='shadow mt-3 p-3'>
             <div className="profile_div text-center">
-            <img src={image ? preview : `${BASE_URL}/uploads/${imgdata}`} alt="img" />
+              <img src={image ? preview : `${BASE_URL}/uploads/${imgdata}`} alt="img" />
             </div>
             <Form>
               <Row>
@@ -141,7 +166,7 @@ const Edit = () => {
                     label={`Male`}
                     name="gender"
                     value={"Male"}
-                    checked={inputdata.gender == "Male" ? true:false}
+                    checked={inputdata.gender == "Male" ? true : false}
                     onChange={setInputValue}
                   />
                   <Form.Check
@@ -149,7 +174,7 @@ const Edit = () => {
                     label={`Female`}
                     name="gender"
                     value={"Female"}
-                    checked={inputdata.gender == "Female" ? true:false}
+                    checked={inputdata.gender == "Female" ? true : false}
                     onChange={setInputValue}
                   />
                 </Form.Group>
