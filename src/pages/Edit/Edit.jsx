@@ -5,10 +5,12 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Select from 'react-select';
 import { ToastContainer, toast } from "react-toastify"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import 'react-toastify/dist/ReactToastify.css';
 import Spiner from '../../components/Spiner/Spinner';
 import "./edit.css"
+import { singeleUserGetFunc } from '../../services/Apis';
+import { BASE_URL } from '../../services/helper';
 
 const Edit = () => {
   const [inputdata, setInputData] = useState({
@@ -20,9 +22,12 @@ const Edit = () => {
     location: ""
   })
   const [status, setStatus] = useState("Active");
+  const [imgdata,setImgdata] = useState("");
   const [image, setImage] = useState();
   const [preview, setPreview] = useState("");
   const [showspin, setShowSpin] = useState(true);
+
+  const {id} = useParams();
 
   const setInputValue = (e) => {
     const { name, value } = e.target;
@@ -43,6 +48,18 @@ const Edit = () => {
 
   const setProfile = (e) => {
     setImage(e.target.files[0])
+  }
+
+  const userProfileGet = async()=>{
+    const response = await singeleUserGetFunc(id);
+    
+    if(response.status === 200){
+      setInputData(response.data.userData)
+      setStatus(response.data.status)
+      setImgdata(response.data.profile)
+    }else{
+      console.log("error");
+    }
   }
 
   const submitUserData = (e) => {
@@ -75,9 +92,15 @@ const Edit = () => {
     }
   }
 
+  useEffect(()=>{
+    userProfileGet();
+  },[id])
+
   useEffect(() => {
+    
     if (image) {
-      setPreview(URL.createObjectURL(preview))
+      setImgdata("")
+      setPreview(URL.revokeObjectURL(preview))
     }
     setTimeout(() => {
       setShowSpin(false);
@@ -91,7 +114,7 @@ const Edit = () => {
           <h2 className='text-center mt-1'>Update Your Details</h2>
           <Card className='shadow mt-3 p-3'>
             <div className="profile_div text-center">
-              <img src={preview ? preview : "/man.png"} alt="img" />
+            <img src={image ? preview : `${BASE_URL}/uploads/${imgdata}`} alt="img" />
             </div>
             <Form>
               <Row>
@@ -118,6 +141,7 @@ const Edit = () => {
                     label={`Male`}
                     name="gender"
                     value={"Male"}
+                    checked={inputdata.gender == "Male" ? true:false}
                     onChange={setInputValue}
                   />
                   <Form.Check
@@ -125,6 +149,7 @@ const Edit = () => {
                     label={`Female`}
                     name="gender"
                     value={"Female"}
+                    checked={inputdata.gender == "Female" ? true:false}
                     onChange={setInputValue}
                   />
                 </Form.Group>

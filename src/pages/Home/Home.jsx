@@ -9,32 +9,42 @@ import { toast } from 'react-toastify';
 import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spinner';
 import { addData } from '../../components/context/ContextProvider';
+import { userGetFunc } from '../../services/Apis';
 
 
 const Home = () => {
 
   const [showspin,setShowSpin] = useState(true);
-
+  const [userData, setUserData] = useState([]);
 
   const navigate = useNavigate();
 
   const { useradd, setUseradd } = useContext(addData);
 
-
   const addUser = () => {
     navigate('/register');
   }
 
+  const userGet = async() => {
+    const response = await userGetFunc();
+    if (response.status === 200) {
+      setUserData(response.data.userData);
+    }else{
+      toast.error(response.data.message);
+    }
+  }
+
   useEffect(() => {
+    userGet();
     setTimeout(() => {
       setShowSpin(false);
     }, 1200);
-  })
+  },[])
 
   return (
     <>
       { 
-        useradd ?  <Alert variant="success" onClose={() => setUseradd("")} dismissible>{useradd.fname.toUpperCase()} Succesfully Added</Alert>:""
+        useradd ?  <Alert variant="success" onClose={() => setUseradd("")} dismissible>{useradd.userData.fname.toUpperCase()} Succesfully Added</Alert>:""
       }
       <div className="container">
       <div className="main_div">
@@ -139,7 +149,7 @@ const Home = () => {
         </div>
       </div>
       {
-        showspin ? <Spiner /> : <Tables />
+        showspin ? <Spiner /> : <Tables userData= {userData}/>
 
       }
     </div> 

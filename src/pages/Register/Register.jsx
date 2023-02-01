@@ -29,6 +29,7 @@ const Register = () => {
 
   const navigate = useNavigate();
   const { useradd, setUseradd } = useContext(addData);
+  console.log(useradd);
 
   const setInputValue = (e) => {
     const { name, value } = e.target;
@@ -92,6 +93,7 @@ const Register = () => {
       }
 
       const response = await registerfunc(data, config);
+      setUseradd(response.data)
       
       if(response.status === 201){
         setInputData({
@@ -105,7 +107,6 @@ const Register = () => {
         });
         setStatus("");
         setImage("");
-        setUseradd(response.data)
         navigate("/");
       }else{
         toast.error("Error!")
