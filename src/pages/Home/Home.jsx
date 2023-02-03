@@ -17,22 +17,27 @@ const Home = () => {
 
   const [showspin,setShowSpin] = useState(true);
   const [userData, setUserData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [gender, setGender] = useState("All");
+  const [status, setStatus] = useState("All");
+  const [sort, setSort] = useState("new")
 
   const navigate = useNavigate();
 
   const { useradd, setUseradd } = useContext(addData);
   const {deletedata, setDLtdata} = useContext(dltdata);
 
+
   const addUser = () => {
     navigate('/register');
   }
 
   const userGet = async() => {
-    const response = await userGetFunc();
+    const response = await userGetFunc(search, gender, status, sort);
     if (response.status === 200) {
       setUserData(response.data.userData);
     }else{
-      toast.error(response.data.message);
+      toast.error("error");
     }
   }
 
@@ -51,7 +56,7 @@ const Home = () => {
     setTimeout(() => {
       setShowSpin(false);
     }, 1200);
-  },[])
+  },[search, gender, status, sort])
 
   return (
     <>
@@ -69,7 +74,7 @@ const Home = () => {
                 placeholder="Search"
                 className="me-2"
                 aria-label="Search"
-                // onChange={(e) => setSearch(e.target.value)}
+                onChange = {(e) =>  setSearch(e.target.value)}
               />
               <Button variant="success" className='search_btn'>Search</Button>
             </Form>
@@ -93,7 +98,7 @@ const Home = () => {
                   label={`All`}
                   name="gender"
                   value={"All"}
-                  // onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => setGender(e.target.value)}
                   defaultChecked
                 />
                 <Form.Check
@@ -101,14 +106,14 @@ const Home = () => {
                   label={`Male`}
                   name="gender"
                   value={"Male"}
-                  // onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => setGender(e.target.value)}
                 />
                 <Form.Check
                   type={"radio"}
                   label={`Female`}
                   name="gender"
                   value={"Female"}
-                  // onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => setGender(e.target.value)}
                 />
               </div>
             </div>
@@ -122,8 +127,8 @@ const Home = () => {
                 <i class="fa-solid fa-sort"></i>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item >New</Dropdown.Item>
-                <Dropdown.Item >Old</Dropdown.Item>
+                <Dropdown.Item onClick={() => setSort("new")}>New</Dropdown.Item>
+                <Dropdown.Item onClick={() => setSort("old")}>Old</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -138,7 +143,7 @@ const Home = () => {
                   label={`All`}
                   name="status"
                   value={"All"}
-                  // onChange={(e) => setStatus(e.target.value)}
+                  onChange={(e) => setStatus(e.target.value)}
                   defaultChecked
                 />
                 <Form.Check
@@ -146,14 +151,14 @@ const Home = () => {
                   label={`Active`}
                   name="status"
                   value={"Active"}
-                  // onChange={(e) => setStatus(e.target.value)}
+                  onChange={(e) => setStatus(e.target.value)}
                 />
                 <Form.Check
                   type={"radio"}
                   label={`InActive`}
                   name="status"
                   value={"InActive"}
-                  // onChange={(e) => setStatus(e.target.value)}
+                  onChange={(e) => setStatus(e.target.value)}
                 />
               </div>
             </div>
