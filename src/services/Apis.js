@@ -5,8 +5,8 @@ export const registerfunc = async(data, header) => {
     return await commonRequest("POST", `${BASE_URL}/user/register`, data, header)
 }
 
-export const userGetFunc = async() => {
-    return await commonRequest("GET", `${BASE_URL}/user/details`,"");
+export const userGetFunc = async(search, gender, status, sort) => {
+    return await commonRequest("GET", `${BASE_URL}/user/details?search=${search}&gender=${gender}&status=${status}&sort=${sort}`,"");
 }
 
 export const singeleUserGetFunc = async(id) => {
@@ -19,4 +19,8 @@ export const editFunc = async (id, data, header) => {
 
 export const deletfunc = async(id)=>{
     return await commonRequest("DELETE",`${BASE_URL}/user/delete/${id}`,{});
+}
+
+export const statusChangeFunc = async(id, data)=>{
+    return await commonRequest("PUT",`${BASE_URL}/user/status/${id}`,{data});
 }

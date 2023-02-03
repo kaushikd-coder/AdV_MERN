@@ -8,8 +8,14 @@ import { ToastContainer, toast } from "react-toastify"
 import "./table.css"
 import { NavLink } from 'react-router-dom';
 import { BASE_URL } from '../../services/helper';
+import { statusChangeFunc } from '../../services/Apis';
 
 const Tables = ({ userData ,  deleteUser }) => {
+
+  const handleChange = async(id, data) => {
+      const response = await statusChangeFunc(id, data); 
+      console.log(response)
+  }
   
   return (
     <div className="container">
