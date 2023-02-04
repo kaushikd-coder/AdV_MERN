@@ -24,3 +24,7 @@ export const deletfunc = async(id)=>{
 export const statusChangeFunc = async(id, data)=>{
     return await commonRequest("PUT",`${BASE_URL}/user/status/${id}`,{data});
 }
+
+export const exportToCsv = async() => {
+    return await commonRequest("GET",`${BASE_URL}/userexports`,""); 
+}

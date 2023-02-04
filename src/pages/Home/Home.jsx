@@ -10,7 +10,7 @@ import Tables from '../../components/Tables/Tables';
 import Spiner from '../../components/Spiner/Spinner';
 import { addData } from '../../components/context/ContextProvider';
 import { dltdata } from '../../components/context/ContextProvider';
-import { deletfunc, userGetFunc } from '../../services/Apis';
+import { deletfunc, exportToCsv, userGetFunc } from '../../services/Apis';
 
 
 const Home = () => {
@@ -46,6 +46,17 @@ const Home = () => {
     if (response.status === 200) {
       userGet();
       setDLtdata(response.data)
+    }else{
+      toast.error("error");
+    }
+  }
+
+  // export to csv
+  const exportUser = async() => {
+    const response = await exportToCsv();
+    
+    if (response.status === 200) {
+      window.open(response.data.downloadUrl, "");   
     }else{
       toast.error("error");
     }
@@ -87,7 +98,7 @@ const Home = () => {
 
         <div className="filter_div mt-5 d-flex justify-content-between flex-wrap">
           <div className="export_csv">
-            <Button className='export_btn'>Export To Csv</Button>
+            <Button className='export_btn' onClick={exportUser}>Export To Csv</Button>
           </div>
           <div className="filter_gender">
             <div className="filter">
