@@ -9,8 +9,9 @@ import "./table.css"
 import { NavLink } from 'react-router-dom';
 import { BASE_URL } from '../../services/helper';
 import { statusChangeFunc } from '../../services/Apis';
+import Paginations from '../Pagination/Paginations';
 
-const Tables = ({ userData ,  deleteUser }) => {
+const Tables = ({ userData ,  deleteUser, userGet, handlePrevious, handleNext, page, pageCount, setPage }) => {
 
   const handleChange = async(id, data) => {
       const response = await statusChangeFunc(id, data); 
@@ -41,7 +42,7 @@ const Tables = ({ userData ,  deleteUser }) => {
                       return (
                         <>
                           <tr >
-                            <td>{index + 1}</td> 
+                            <td>{index + 1 + (page - 1) * 4}</td> 
                             <td>{element.fname + element.lname}</td>
                             <td>{element.email}</td>
                             <td>{element.gender == "Male" ? "M" : "F"}</td>
@@ -93,13 +94,13 @@ const Tables = ({ userData ,  deleteUser }) => {
 
               </tbody>
             </Table>
-            {/* <Paginations
+            <Paginations
                 handlePrevious={handlePrevious}
                 handleNext={handleNext}
                 page={page}
                 pageCount={pageCount}
                 setPage={setPage}
-              /> */}
+              />
           </Card>
         </div>
       </Row>
